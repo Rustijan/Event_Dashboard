@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Something went wrong')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container narrow main-content">
+    <section class="empty-state">
+        <p class="eyebrow" th:text="${'Error ' + status}">Error</p>
+        <h1>We could not complete that request</h1>
+        <p th:text="${errorMessage}">Unexpected error.</p>
+        <p class="muted" th:if="${errorReference}" th:text="${'Error reference: ' + errorReference}">Reference</p>
+        <a class="button" th:href="@{/events}">Return to events</a>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container narrow main-content">
+    <a class="back-link" th:href="@{/organizer/events}">← Organizer dashboard</a>
+    <section class="form-card">
+        <p class="eyebrow">Event details</p><h1 th:text="${pageTitle}">Event</h1>
+        <form th:action="${formAction}" method="post" th:object="${eventForm}">
+            <label>Title
+                <input type="text" th:field="*{title}">
+                <span class="field-error" th:errors="*{title}"></span>
+            </label>
+            <label>Description
+                <textarea rows="7" th:field="*{description}"></textarea>
+                <span class="field-error" th:errors="*{description}"></span>
+            </label>
+            <div class="form-row">
+                <label>Category
+                    <select th:field="*{categoryId}">
+                        <option value="">Select category</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                    </select>
+                    <span class="field-error" th:errors="*{categoryId}"></span>
+                </label>
+                <label>Location
+                    <select th:field="*{locationId}">
+                        <option value="">Select location</option>
+                        <option th:each="location : ${locations}" th:value="${location.id}"
+                                th:text="${location.name + ' · ' + location.city + ' · capacity ' + location.capacity}"></option>
+                    </select>
+                    <span class="field-error" th:errors="*{locationId}"></span>
+                </label>
+            </div>
+            <button class="button full" type="submit">Save event</button>
+        </form>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

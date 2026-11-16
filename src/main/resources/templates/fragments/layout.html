@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · EventHub'">EventHub</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:fragment="header" class="site-header">
+    <nav class="nav container">
+        <a class="brand" th:href="@{/events}">EventHub</a>
+        <div class="nav-links">
+            <a th:href="@{/events}">Events</a>
+            <a th:if="${currentUser != null and currentUser.role.name() == 'PARTICIPANT'}"
+               th:href="@{/profile/registrations}">My registrations</a>
+            <a th:if="${currentUser != null and currentUser.role.name() == 'ORGANIZER'}"
+               th:href="@{/organizer/events}">Organizer dashboard</a>
+            <a th:if="${currentUser == null}" th:href="@{/login}">Sign in</a>
+            <a th:if="${currentUser == null}" class="button small" th:href="@{/register}">Create account</a>
+            <span th:if="${currentUser != null}" class="user-name" th:text="${currentUser.fullName}">User</span>
+            <form th:if="${currentUser != null}" th:action="@{/logout}" method="post">
+                <button class="link-button" type="submit">Sign out</button>
+            </form>
+        </div>
+    </nav>
+</header>
+<div th:fragment="messages" class="container messages">
+    <div class="alert success" th:if="${message}" th:text="${message}"></div>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+</div>
+<footer th:fragment="footer" class="site-footer">
+    <div class="container">EventHub · Java Fundamentals Final Project</div>
+</footer>
+</body>
+</html>

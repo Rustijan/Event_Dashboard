@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${event.title})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<div th:replace="~{fragments/layout :: messages}"></div>
+<main class="container main-content">
+    <a class="back-link" th:href="@{/events}">← All events</a>
+    <section class="event-header">
+        <div>
+            <div class="card-meta">
+                <span class="badge" th:text="${event.category.name}">Category</span>
+                <span class="status" th:text="${event.status}">Status</span>
+            </div>
+            <h1 th:text="${event.title}">Event title</h1>
+            <p class="lead" th:text="${event.description}">Description</p>
+        </div>
+        <aside class="info-panel">
+            <strong th:text="${event.location.name}">Location</strong>
+            <span th:text="${event.location.city + ', ' + event.location.address}">Address</span>
+            <span th:text="${'Organizer: ' + event.organizerName}">Organizer</span>
+        </aside>
+    </section>
+    <div class="section-heading">
+        <h2>Available sessions</h2>
+        <a th:if="${currentUser != null and currentUser.role.name() == 'ORGANIZER' and currentUser.id == event.organizerId and event.status.name() == 'DRAFT'}"
+           class="button secondary" th:href="@{/organizer/events/{id}/sessions/add(id=${event.id})}">Manage sessions</a>
+    </div>
+    <div class="session-list" th:if="${!sessions.isEmpty()}">
+        <article class="session" th:each="eventSession : ${sessions}">
+            <div>
+                <strong th:text="${#temporals.format(eventSession.startsAt, 'dd MMM yyyy, HH:mm')}">Start</strong>
+                <span th:text="${'– ' + #temporals.format(eventSession.endsAt, 'HH:mm')}">End</span>
+                <p class="muted" th:text="${eventSession.availablePlaces + ' of ' + eventSession.capacity + ' places available'}">Places</p>
+            </div>
+            <form th:if="${currentUser != null and currentUser.role.name() == 'PARTICIPANT' and event.status.name() == 'PUBLISHED' and !eventSession.full}"
+                  th:action="@{/sessions/{id}/register(id=${eventSession.id})}" method="post">
+                <button class="button" type="submit">Register</button>
+            </form>
+            <a th:if="${currentUser == null}" class="button" th:href="@{/login}">Sign in to register</a>
+            <span th:if="${eventSession.full}" class="badge danger">Full</span>
+            <a th:if="${currentUser != null and currentUser.role.name() == 'ORGANIZER' and currentUser.id == event.organizerId}"
+               class="text-link" th:href="@{/organizer/sessions/{id}/participants(id=${eventSession.id})}">Participants</a>
+        </article>
+    </div>
+    <div class="empty-state" th:if="${sessions.isEmpty()}">No sessions have been scheduled.</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

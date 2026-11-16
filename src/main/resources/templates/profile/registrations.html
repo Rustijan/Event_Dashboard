@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My registrations')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<div th:replace="~{fragments/layout :: messages}"></div>
+<main class="container main-content">
+    <p class="eyebrow">Participant profile</p><h1>My registrations</h1>
+    <div class="table-wrap" th:if="${!registrations.isEmpty()}">
+        <table>
+            <thead><tr><th>Event</th><th>Session</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody><tr th:each="registration : ${registrations}">
+                <td th:text="${registration.eventTitle}">Event</td>
+                <td th:text="${#temporals.format(registration.sessionStartsAt, 'dd MMM yyyy, HH:mm')}">Date</td>
+                <td><span class="badge" th:text="${registration.status}">Status</span></td>
+                <td><form th:if="${registration.status.name() == 'ACTIVE'}"
+                          th:action="@{/registrations/{id}/cancel(id=${registration.id})}" method="post">
+                    <button class="link-button danger-text" type="submit">Cancel registration</button>
+                </form></td>
+            </tr></tbody>
+        </table>
+    </div>
+    <div class="empty-state" th:if="${registrations.isEmpty()}">You have no registrations yet.</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

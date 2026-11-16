@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Events')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<div th:replace="~{fragments/layout :: messages}"></div>
+<main class="container main-content">
+    <section class="hero">
+        <div>
+            <p class="eyebrow">Discover and participate</p>
+            <h1>Events worth showing up for</h1>
+            <p>Find workshops, community meetings, and practical sessions near you.</p>
+        </div>
+    </section>
+    <form class="filters" method="get" th:action="@{/events}" th:object="${criteria}">
+        <label>Search
+            <input type="search" th:field="*{query}" placeholder="Title or description">
+        </label>
+        <label>Category
+            <select th:field="*{categoryId}">
+                <option value="">All categories</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+        </label>
+        <label>City
+            <select th:field="*{city}">
+                <option value="">All cities</option>
+                <option th:each="city : ${cities}" th:value="${city}" th:text="${city}"></option>
+            </select>
+        </label>
+        <button class="button" type="submit">Apply filters</button>
+    </form>
+    <div class="card-grid" th:if="${!events.isEmpty()}">
+        <article class="card" th:each="event : ${events}">
+            <div class="card-meta">
+                <span class="badge" th:text="${event.category.name}">Category</span>
+                <span th:text="${event.location.city}">City</span>
+            </div>
+            <h2 th:text="${event.title}">Event title</h2>
+            <p th:text="${event.description}">Description</p>
+            <p class="muted" th:text="${event.location.name + ' · ' + event.location.address}">Location</p>
+            <a class="text-link" th:href="@{/events/{id}(id=${event.id})}">View event →</a>
+        </article>
+    </div>
+    <div class="empty-state" th:if="${events.isEmpty()}">
+        <h2>No events found</h2>
+        <p>Try changing the filters.</p>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

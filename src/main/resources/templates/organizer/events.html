@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Organizer dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<div th:replace="~{fragments/layout :: messages}"></div>
+<main class="container main-content">
+    <div class="section-heading">
+        <div><p class="eyebrow">Organizer workspace</p><h1>My events</h1></div>
+        <a class="button" th:href="@{/organizer/events/create}">Create event</a>
+    </div>
+    <div class="table-wrap" th:if="${!events.isEmpty()}">
+        <table>
+            <thead><tr><th>Event</th><th>Category</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+            <tr th:each="event : ${events}">
+                <td><a th:href="@{/events/{id}(id=${event.id})}" th:text="${event.title}">Event</a></td>
+                <td th:text="${event.category.name}">Category</td>
+                <td th:text="${event.location.name}">Location</td>
+                <td><span class="badge" th:text="${event.status}">Status</span></td>
+                <td class="actions">
+                    <a th:if="${event.status.name() == 'DRAFT'}"
+                       th:href="@{/organizer/events/{id}/edit(id=${event.id})}">Edit</a>
+                    <a th:if="${event.status.name() == 'DRAFT'}"
+                       th:href="@{/organizer/events/{id}/sessions/add(id=${event.id})}">Sessions</a>
+                    <form th:if="${event.status.name() == 'DRAFT'}" th:action="@{/organizer/events/{id}/publish(id=${event.id})}" method="post">
+                        <button class="link-button" type="submit">Publish</button>
+                    </form>
+                    <form th:if="${event.status.name() != 'CANCELLED' and event.status.name() != 'COMPLETED'}"
+                          th:action="@{/organizer/events/{id}/cancel(id=${event.id})}" method="post">
+                        <button class="link-button danger-text" type="submit">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="empty-state" th:if="${events.isEmpty()}">
+        <h2>No events yet</h2><p>Create your first event and add a session.</p>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

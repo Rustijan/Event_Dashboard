@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Event sessions')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container main-content">
+    <a class="back-link" th:href="@{/organizer/events}">← Organizer dashboard</a>
+    <div class="two-column">
+        <section class="form-card">
+            <p class="eyebrow">Schedule</p><h1>Add session</h1>
+            <p th:text="${event.title}">Event</p>
+            <div class="alert error" th:if="${error}" th:text="${error}"></div>
+            <form th:action="@{/organizer/events/{id}/sessions/add(id=${event.id})}" method="post" th:object="${sessionForm}">
+                <label>Starts at
+                    <input type="datetime-local" th:field="*{startsAt}">
+                    <span class="field-error" th:errors="*{startsAt}"></span>
+                </label>
+                <label>Ends at
+                    <input type="datetime-local" th:field="*{endsAt}">
+                    <span class="field-error" th:errors="*{endsAt}"></span>
+                </label>
+                <label>Capacity
+                    <input type="number" min="1" th:field="*{capacity}">
+                    <span class="field-error" th:errors="*{capacity}"></span>
+                </label>
+                <p class="muted" th:text="${'Location limit: ' + event.location.capacity}">Limit</p>
+                <button class="button full" type="submit">Add session</button>
+            </form>
+        </section>
+        <section>
+            <h2>Scheduled sessions</h2>
+            <article class="session" th:each="eventSession : ${sessions}">
+                <div><strong th:text="${#temporals.format(eventSession.startsAt, 'dd MMM yyyy, HH:mm')}">Start</strong>
+                    <p class="muted" th:text="${eventSession.capacity + ' places'}">Capacity</p></div>
+            </article>
+            <div class="empty-state compact" th:if="${sessions.isEmpty()}">Add at least one session before publishing.</div>
+        </section>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

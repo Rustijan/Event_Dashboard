@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Participants')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container main-content">
+    <div class="section-heading">
+        <div><p class="eyebrow">Session</p><h1>Participants</h1></div>
+    </div>
+    <div class="table-wrap" th:if="${!registrations.isEmpty()}">
+        <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Registered at</th></tr></thead>
+            <tbody><tr th:each="registration : ${registrations}">
+                <td th:text="${registration.participantName}">Name</td>
+                <td th:text="${registration.participantEmail}">Email</td>
+                <td th:text="${#temporals.format(registration.registeredAt, 'dd MMM yyyy, HH:mm')}">Date</td>
+            </tr></tbody>
+        </table>
+    </div>
+    <div class="empty-state" th:if="${registrations.isEmpty()}">No active registrations for this session.</div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
