@@ -86,6 +86,35 @@ public class OrganizerController {
             return "organizer/event-form";
         }
     }
+    @GetMapping("/organizer/events/{eventId}/edit")
+    public String showEditEventForm(
+            @PathVariable long eventId,
+            HttpSession session,
+            Model model
+    ){
+        AuthenticatedUser authenticatedUser = (AuthenticatedUser)
+                session.getAttribute(SessionAttributes.CURRENT_USER);
+
+        Event event = eventService.requireOwner(eventId, authenticatedUser.getId());
+
+        EventForm eventForm = new EventForm();
+        eventForm.setTitle(event.getTitle());
+        eventForm.setDescription(event.getDescription());
+        eventForm.setCategoryId(event.getCategory().getId());
+        eventForm.setLocationId(event.getLocation().getId());
+
+
+        model.addAttribute("eventForm", eventForm);
+        model.addAttribute("categories", catalogService.getCategories());
+        model.addAttribute("locations", catalogService.getLocations());
+        model.addAttribute("pageTitle", "Edit Event");
+        model.addAttribute("formAction",
+                "/organizer/events/" + eventId + "/edit");
+
+        return "organizer/event-form";
+
+    }
+
 
 
 }
