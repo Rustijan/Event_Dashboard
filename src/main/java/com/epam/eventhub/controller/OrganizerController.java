@@ -117,6 +117,47 @@ public class OrganizerController {
 
     }
 
+    @PostMapping("/organizer/events/{eventId}/edit")
+    public String editEvent(
+            @PathVariable long eventId,
+            @Valid @ModelAttribute("eventForm") EventForm eventForm,
+            BindingResult bindingResult,
+            HttpSession session,
+            Model model
+    ) {
+        AuthenticatedUser user = (AuthenticatedUser)
+                session.getAttribute(SessionAttributes.CURRENT_USER);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", catalogService.getCategories());
+            model.addAttribute("locations", catalogService.getLocations());
+            model.addAttribute("pageTitle", "Edit Event");
+            model.addAttribute("formAction",
+                    "/organizer/events/" + eventId + "/edit");
+
+            return "organizer/event-form";
+        }
+
+        try {
+            eventService.update(eventId, eventForm, user.getId());
+            return "redirect:/organizer/events";
+
+        } catch (BusinessRuleException e) {
+            model.addAttribute("categories", catalogService.getCategories());
+            model.addAttribute("locations", catalogService.getLocations());
+            model.addAttribute("pageTitle", "Edit Event");
+            model.addAttribute("formAction",
+                    "/organizer/events/" + eventId + "/edit");
+            model.addAttribute("eventError", e.getMessage());
+
+            return "organizer/event-form";
+        }
+    }
+
+
+
+
+
 
 
 }
